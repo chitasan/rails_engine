@@ -35,6 +35,7 @@ group :development, :test do
   gem 'capybara', '~> 2.13'
   gem 'rspec-rails'
   gem 'launchy'
+  gem 'fast_jsonapi'
 end
 
 group :development do
