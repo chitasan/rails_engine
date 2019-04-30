@@ -8,17 +8,143 @@ describe 'Merchants API' do
 
     expect(response).to be_successful
 
-    merchant = JSON.parse(response.body)
-  end
-
-  it 'can return one merchant by merchant id' do
-    merchant = create(:merchant)
-
-    get "/api/v1/merchants/#{merchant.id}"
-
-    item = JSON.parse(response.body)
+    merchants = JSON.parse(response.body)
 
     expect(response).to be_successful
-    expect(item["id"]).to eq(merchant.id)
+    expect(merchants.count).to eq(3)
+  end
+
+  it "can get one merchant by its id" do
+    id = create(:merchant).id
+
+    get "/api/v1/merchants/#{id}"
+
+    merchant = JSON.parse(response.body)
+
+    expect(response).to be_successful
+    expect(merchant["id"]).to eq(id)
+  end
+
+  describe 'find a merchant' do 
+    it 'by id attribute' do 
+      id = create(:merchant).id
+
+      get "/api/v1/merchants/find?id=#{id}"
+
+      merchant = JSON.parse(response.body)
+ 
+      expect(response).to be_successful
+      expect(merchant["data"]["id"]).to eq(id.to_s)
+    end  
+
+    it 'by name attribute' do 
+      name = create(:merchant).name
+
+      get "/api/v1/merchants/find?name=#{name}"
+
+      merchant = JSON.parse(response.body)
+    
+      expect(response).to be_successful
+      expect(merchant["data"]["attributes"]["name"]).to eq(name)
+    end  
+
+    it 'by created_at attribute' do 
+      merchant = create(:merchant, created_at: '2012-03-28 14:53:59 UTC')
+      merchant_2 = create(:merchant, created_at: '2013-03-28 14:53:59 UTC')
+
+      get "/api/v1/merchants/find?created_at=#{merchant.created_at}"
+
+      merchant_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchant_returned["data"]["attributes"]["name"]).to eq(merchant.name)
+
+      get "/api/v1/merchants/find?created_at=#{merchant_2.created_at}"
+
+      merchant_2_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchant_2_returned["data"]["attributes"]["name"]).to eq(merchant_2.name)
+    end  
+
+    it 'by updated_at attribute' do 
+      merchant_1 = create(:merchant, updated_at: '2012-03-28 14:53:59 UTC')
+      merchant_2 = create(:merchant, updated_at: '2013-03-28 14:53:59 UTC')
+
+      get "/api/v1/merchants/find?updated_at=#{merchant_1.updated_at}"
+
+      merchant_1_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchant_1_returned["data"]["attributes"]["name"]).to eq(merchant_1.name)
+
+      get "/api/v1/merchants/find?updated_at=#{merchant_2.updated_at}"
+
+      merchant_2_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchant_2_returned["data"]["attributes"]["name"]).to eq(merchant_2.name)
+    end  
+  end 
+
+  describe 'find all merchants' do 
+    it 'by id attribute' do 
+      id = create(:merchant).id 
+
+      get "/api/v1/merchants/find_all?id=#{id}"
+
+      merchant = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchant["data"][0]["id"]).to eq(id.to_s)
+    end 
+
+    it 'by name attribute' do 
+      merchant_1 = create(:merchant)
+      merchant_2 = create(:merchant)
+      merchant_3 = create(:merchant, name: "Pie")
+
+      get "/api/v1/merchants/find_all?name=Jim Bob"
+      
+      merchants_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchants_returned["data"][0]["attributes"]["name"]).to eq(merchant_1.name)
+      expect(merchants_returned["data"][1]["attributes"]["name"]).to eq(merchant_2.name)
+
+      expect(merchants_returned["data"].length).to eq(2)
+    end 
+
+    it 'by created_at attribute' do 
+      merchant_1 = create(:merchant, created_at: '2012-03-28 14:53:59 UTC')
+      merchant_2 = create(:merchant, created_at: '2012-03-28 14:53:59 UTC')
+      merchant_3 = create(:merchant, created_at: '2013-04-28 14:53:59 UTC')
+
+      get "/api/v1/merchants/find_all?created_at=2012-03-28 14:53:59 UTC"
+
+      merchants_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchants_returned["data"][0]["attributes"]["name"]).to eq(merchant_1.name)
+      expect(merchants_returned["data"][1]["attributes"]["name"]).to eq(merchant_2.name)
+
+      expect(merchants_returned["data"].length).to eq(2)
+    end 
+
+    it 'by updated_at attribute' do 
+      merchant_1 = create(:merchant, updated_at: '2012-03-28 14:53:59 UTC')
+      merchant_2 = create(:merchant, updated_at: '2012-03-28 14:53:59 UTC')
+      merchant_3 = create(:merchant, updated_at: '2013-04-28 14:53:59 UTC')
+
+      get "/api/v1/merchants/find_all?updated_at=2012-03-28 14:53:59 UTC"
+
+      merchants_returned = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(merchants_returned["data"][0]["attributes"]["name"]).to eq(merchant_1.name)
+      expect(merchants_returned["data"][1]["attributes"]["name"]).to eq(merchant_2.name)
+
+      expect(merchants_returned["data"].length).to eq(2)
+    end 
   end 
 end 
