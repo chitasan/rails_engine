@@ -3,5 +3,6 @@ FactoryBot.define do
     name { "Apples" }
     description { "Red" }
     unit_price { 1 }
+    merchant
   end
 end
