@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Merchants API' do 
   it 'sends a list of all merchants' do
-    create_list(:merchant, 3)
+    merchant_1, merchant_2, merchant_3 = create_list(:merchant, 3)
 
     get "/api/v1/merchants"
 
@@ -11,7 +11,7 @@ describe 'Merchants API' do
     merchants = JSON.parse(response.body)
 
     expect(response).to be_successful
-    expect(merchants.count).to eq(3)
+    expect(merchants["data"].count).to eq(3)
   end
 
   it "can get one merchant by its id" do
@@ -22,7 +22,7 @@ describe 'Merchants API' do
     merchant = JSON.parse(response.body)
 
     expect(response).to be_successful
-    expect(merchant["id"]).to eq(id)
+    expect(merchant["data"]["id"]).to eq(id.to_s)
   end
 
   it 'can return a random merchant' do
@@ -60,8 +60,7 @@ describe 'Merchants API' do
     end  
 
     it 'by created_at attribute' do 
-      merchant = create(:merchant, created_at: '2012-03-28 14:53:59 UTC')
-      merchant_2 = create(:merchant, created_at: '2013-03-28 14:53:59 UTC')
+      merchant, merchant_2 = create_list(:merchant, 2)
 
       get "/api/v1/merchants/find?created_at=#{merchant.created_at}"
 
@@ -107,6 +106,7 @@ describe 'Merchants API' do
       merchant = JSON.parse(response.body)
 
       expect(response).to be_successful
+      
       expect(merchant["data"][0]["id"]).to eq(id.to_s)
     end 
 
