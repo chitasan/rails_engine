@@ -20,7 +20,7 @@ The program can run in development from the Rails server after following the fol
 * initialize the database with `rake db:{drop,create,migrate,seed}`
 * import the CSVs with `rake import:{customers,merchants,invoices,items,invoice_items,transactions}`
 * start the rails server with `rails s`
-* on your browner, enter endpoints you want to see, ex: to see all merchants `http://localhost:3000/api/v1/merchants`
+* on your browser, enter the endpoint you want to see, ex: to see all merchants `http://localhost:3000/api/v1/merchants`
 
 ## Testing
 
