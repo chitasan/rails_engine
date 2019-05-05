@@ -31,5 +31,6 @@ The project uses <a href="https://github.com/colszowka/simplecov"> SimpleCov</a>
 ## System Requirements
 
 Ruby, version 2.4.1
+
 Ruby on Rails, version 5.1.7.  
 
