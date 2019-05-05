@@ -1,24 +1,35 @@
-# README
+# Rails Engine
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## About
 
-Things you may want to cover:
+Rails Engine is a solo project during Module 3 at the Turing School of Software Design, Module 3. <a href="http://backend.turing.io/module3/projects/rails_engine">Project Specs</a>. The project learning goals are 
 
-* Ruby version
+- Advanced ActiveRecord
+- Single Responsibility controllers to provide a well-designed and versioned API
+- Controller tests to drive design
 
-* System dependencies
+Ruby on Rails and ActiveRecord were used to build a versioned JSON API with sales data. 
 
-* Configuration
+## Installation & Setup 
 
-* Database creation
+The program can run in development from the Rails server after following the following steps in your console:
 
-* Database initialization
+* clone to a local repository using ` git clone git@github.com:chitasan/rails_engine.git`
+* open the project directory with a text editor `cd rails_egine` and `code .` 
+* install gem packages `bundle install`
+* initialize the database with `rake db:{drop,create,migrate,seed}`
+* import the CSVs with `rake import:{customers,merchants,invoices,items,invoice_items,transactions}`
+* start the rails server with `rails s`
+* on your browner, enter endpoints you want to see, ex: to see all merchants `http://localhost:3000/api/v1/merchants`
 
-* How to run the test suite
+## Testing
 
-* Services (job queues, cache servers, search engines, etc.)
+The project uses <a href="https://github.com/colszowka/simplecov"> SimpleCov</a> and <a href="https://github.com/rspec/rspec"> RSpec</a> to test. 
 
-* Deployment instructions
+`rspec` runs the tests.
 
-* ...
+## System Requirements
+
+Ruby, version 2.4.1
+Ruby on Rails, version 5.1.7.  
+
