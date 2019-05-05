@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Merchants API: Business Intelligence' do
+RSpec.describe 'Merchants API Business Intelligence' do
   describe 'All Merchants' do
     it 'returns the top x merchants ranked by total revenue' do
       customer = create(:customer)
@@ -140,13 +140,90 @@ RSpec.describe 'Merchants API: Business Intelligence' do
   end 
 
   describe 'Single Merchants' do
-    xit 'returns the total revenue for that merchant across successful transactions' do 
+    it 'returns the total revenue for that merchant across successful transactions' do 
+      customer = create(:customer)
+
+      merchant_1 = create(:merchant)
+      invoice_1 = create(:invoice, merchant: merchant_1, customer: customer)
+      invoice_2 = create(:invoice, merchant: merchant_1, customer: customer)
+      transaction_1 = create(:transaction, invoice: invoice_1, result: 0)
+      transaction_2 = create(:transaction, invoice: invoice_2, result: 0)
+      transaction_3 = create(:transaction, invoice: invoice_2, result: 1)
+
+      merchant_2 = create(:merchant)
+      invoice_3 = create(:invoice, merchant: merchant_2, customer: customer)
+      transaction_4 = create(:transaction, invoice: invoice_3, result: 0)
+
+      get "/api/v1/merchants/#{merchant_1.id}/revenue"
+      
+      expect(response).to be_successful 
+      total_revenue = JSON.parse(response.body)
+      expect(total_revenue["data"]["attributes"]["revenue"]).to eq((merchant_1.total_revenue / 100.0).to_s)
+
+      get "/api/v1/merchants/#{merchant_2.id}/revenue"
+      
+      expect(response).to be_successful 
+      total_revenue = JSON.parse(response.body)
+      expect(total_revenue["data"]["attributes"]["revenue"]).to eq((merchant_2.total_revenue / 100.0).to_s)
     end 
 
-    xit 'returns the total revenue for that merchant for a specific invoice date x' do
+    it 'returns the total revenue for that merchant for a specific invoice date x' do
+      customer = create(:customer)
+
+      merchant_1 = create(:merchant)
+      item_1 = create(:item, merchant: merchant_1)
+      item_2 = create(:item, merchant: merchant_1)
+      invoice_1 = create(:invoice, merchant: merchant_1, customer: customer, created_at: "2013-03-16 09:23:09 UTC")
+      invoice_2 = create(:invoice, merchant: merchant_1, customer: customer, created_at: "2013-02-20 09:23:09 UTC")
+      invoice_item_2 = create(:invoice_item, invoice: invoice_1, item: item_1, unit_price: 2, quantity: 1)
+      invoice_item_3 = create(:invoice_item, invoice: invoice_2, item: item_2, unit_price: 4, quantity: 1)
+      transaction_1 = create(:transaction, invoice: invoice_1, result: 0)
+      transaction_2 = create(:transaction, invoice: invoice_2, result: 0)
+      transaction_3 = create(:transaction, invoice: invoice_2, result: 1)
+
+      merchant_2 = create(:merchant)
+      item_3 = create(:item, merchant: merchant_2)
+      invoice_3 = create(:invoice, merchant: merchant_2, customer: customer, created_at: "2012-03-07 09:54:09 UTC")
+      invoice_item_4 = create(:invoice_item, invoice: invoice_3, item: item_3, unit_price: 4, quantity: 1)
+      transaction_4 = create(:transaction, invoice: invoice_3, result: 0)
+
+      get "/api/v1/merchants/#{merchant_1.id}/revenue?date=2012-03-16"
+
+      expect(response).to be_successful
+      total_revenue = JSON.parse(response.body)
+      expect(total_revenue["data"]["attributes"]["revenue"]).to eq((merchant_1.total_revenue_for_date("2012-03-16") / 100.0 ).to_s)
+
+      get "/api/v1/merchants/#{merchant_2.id}/revenue?date=2012-03-07"
+
+      expect(response).to be_successful
+      total_revenue = JSON.parse(response.body)
+      expect(total_revenue["data"]["attributes"]["revenue"]).to eq((merchant_2.total_revenue_for_date("2012-03-07") / 100.0 ).to_s)
     end 
 
-    xit 'returns the customer who has conducted the most total number of successful transactions' do
+    it 'returns the customer who has conducted the most total number of successful transactions' do
+      merchant = create(:merchant)
+
+      customer_1 = create(:customer)
+      customer_2 = create(:customer)
+      customer_3 = create(:customer)
+    
+      invoice_1 = create(:invoice, merchant: merchant, customer: customer_1)
+      invoice_2 = create(:invoice, merchant: merchant, customer: customer_2)
+      invoice_3 = create(:invoice, merchant: merchant, customer: customer_2)
+      invoice_4 = create(:invoice, merchant: merchant, customer: customer_2)
+      invoice_5 = create(:invoice, merchant: merchant, customer: customer_3)
+      invoice_6 = create(:invoice, merchant: merchant, customer: customer_3)
+    
+      create(:transaction, invoice: invoice_1, result: 0)
+      create(:transaction, invoice: invoice_2, result: 0)
+      create(:transaction, invoice: invoice_3, result: 1)
+      create(:transaction, invoice: invoice_4, result: 1)
+      create(:transaction, invoice: invoice_5, result: 0)
+      create(:transaction, invoice: invoice_6, result: 0)
+    
+      get "/api/v1/merchants/#{merchant.id}/favorite_customer"
+
+      
     end 
 
     #boss mode

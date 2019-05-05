@@ -9,7 +9,14 @@ Rails.application.routes.draw do
         get '/most_items', to: 'most_items#index'
         get '/revenue', to: 'revenue#index'
       end 
-      resources :merchants, only: [:index, :show] 
+      resources :merchants, only: [:index, :show] do
+        scope module: :merchants do 
+          resources :items, only: [:index]
+          resources :invoices, only: [:index]
+          get '/revenue', to: 'revenue#show'
+          get '/favorite_customer', to: 'favorite_customer#show'
+        end
+      end 
     end 
   end
 end
