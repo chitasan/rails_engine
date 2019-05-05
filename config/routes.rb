@@ -30,6 +30,17 @@ Rails.application.routes.draw do
           get '/best_day', to: 'best_day#show'
         end 
       end 
+
+      namespace :customers do 
+        get '/find', to: 'search#show' #no test yet 
+        get '/find_all', to: 'search#index' #no test yet 
+        get '/random', to: 'random#show' #no test yet 
+      end
+      resources :customers, only: [:index, :show] do
+        scope module: :customers do 
+          get 'favorite_merchant', to: 'favorite_merchant#show'
+        end 
+      end 
     end 
   end
 end
